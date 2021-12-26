@@ -6,15 +6,16 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
-  url: 'https://your-docusaurus-test-site.com',
+  title: 'ravila\' blog',
+  url: 'https://rafailong.github.io/blog',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'Rafailong', // Usually your GitHub org/user name.
+  projectName: 'blog',
+  deploymentBranch: 'deployment',
+  trailingSlash: false,
 
   presets: [
     [
@@ -26,7 +27,6 @@ const config = {
           routeBasePath: '/',
           showReadingTime: true,
           blogSidebarTitle: 'All posts',
-          blogSidebarCount: 'ALL',
           blogTitle: 'ravila\' blog!',
           blogDescription: 'A Docusaurus powered blog!',
           // Please change this to your repo.
@@ -73,6 +73,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
+        additionalLanguages: ['haskell', 'java', 'scala', 'kotlin'],
       },
     }),
 };
