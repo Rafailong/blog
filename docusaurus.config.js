@@ -14,7 +14,7 @@ const config = {
   favicon: 'img/favicon.ico',
   organizationName: 'Rafailong', // Usually your GitHub org/user name.
   projectName: 'blog',
-  deploymentBranch: 'deployment',
+  deploymentBranch: 'main',
   trailingSlash: false,
 
   presets: [
