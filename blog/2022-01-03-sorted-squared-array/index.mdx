@@ -1,0 +1,56 @@
+---
+slug: sorted-squared-array
+title: sorted squared array
+authors: [ravila]
+tags: [algo, kotlin]
+---
+
+import CodeBlock from '@theme/CodeBlock';
+import FirstAttempt from '!!raw-loader!./solutions/first-attempt.kts';
+import SecondAttempt from '!!raw-loader!./solutions/second-attempt.kts';
+import BonusAttempt from '!!raw-loader!./solutions/bonus-attempt.kts';
+
+this time we will try to (satisfactory) solve a coding challenge.
+
+### description
+
+write a function that takes in a non-empty array of integers that are sorted
+in ascending order and returns a new array of the same length with the squares
+of the original integers also sorted in ascending order.
+
+### first attempt
+
+first attempt which fails when `array` includes negative numbers
+give `array = [-2, -1]` output is `[4, 1]` which is wrong
+because correct output should be sorted in ascending order:
+
+<CodeBlock className="language-kotlin" title="first-attempt.kts">{FirstAttempt}</CodeBlock>
+
+what i like from `first-attempt` (failed) solution is that
+**we have no state** (we are not mutating anything), we are only
+traversing our input array.
+
+### second attempt
+
+an _optimal_ solution would be to use a data structure that preserves
+the order of its elements i.e binary tree
+but, given thath we have no binary tree at our disposal we can leverage
+Kotlin native [BinarySearch](https://kotlinlang.org/docs/list-operations.html#binary-search-in-sorted-lists)
+methods in `List`. we need to be careful with the return value of 
+such a function in order to prevent index bound exceptions:
+
+<CodeBlock className="language-kotlin" title="second-attempt.kts">{SecondAttempt}</CodeBlock>
+
+what i **dislike** from `second-attempt` solution is that: we have state mutations.
+on the other hand i like that we are still traversing our input array once 
+meaning `O(n)` complexity which I think is nice!
+
+### bonus
+
+as a bonus here is a 3rd optional solution that is not as efficient as the previous one
+but this third solution is based on immutable data structures which is always good:
+
+<CodeBlock className="language-kotlin" title="bonus-attempt.kts">{BonusAttempt}</CodeBlock>
+
+> PD. in case you are wondering bout the `kscript` in the codeblocks take a look at:
+> [holgerbrandl/kscript](https://github.com/holgerbrandl/kscript)
