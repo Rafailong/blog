@@ -4,9 +4,25 @@
         <title>ravila' blog Blog</title>
         <link>https://rafailong.github.io/blog/</link>
         <description>ravila' blog Blog</description>
-        <lastBuildDate>Sat, 25 Dec 2021 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 27 Dec 2021 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
+        <item>
+            <title><![CDATA[haskell dollar-sign operator]]></title>
+            <link>https://rafailong.github.io/blog/dollar-sign-operator</link>
+            <guid>dollar-sign-operator</guid>
+            <pubDate>Mon, 27 Dec 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[The ($) operator is a convenience for when you want to express]]></description>
+            <content:encoded><![CDATA[<p>The <code>($)</code> operator is a convenience for when you want to express
+something with less pairs of parenths.</p><p>Type of <code>($)</code> is:</p><pre><code class="language-haskell">($) :: (a -&gt; b) -&gt; a -&gt; b -- Defined in ‘GHC.Base’
+infixr 0 $
+</code></pre><p>Which means that:</p><ol><li>it is a infix operator</li><li>it associates to the right</li><li>and, it has the lowest possibile precedence</li></ol><p>Usage example:</p><pre><code class="language-haskell">_ =(2^) (2 + 2) -- 16
+</code></pre><p>Above code we need all the parenths because we want to first evaluate
+<code>(2 + 2)</code>. If we remove the parenths the result is different:</p><pre><code class="language-haskell">_ = (2^) 2 + 2 -- 6
+</code></pre><p>Here is where <code>($)</code> comes handy:</p><pre><code class="language-haskell">_ = (2^) $ 2 + 2 -- 16
+</code></pre><p>This happens because of how <code>($)</code> associates.
+So, first <code>(2 + 2)</code> is evaluted and its results is used in <code>(2^)</code>.</p>]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[Welcome]]></title>
             <link>https://rafailong.github.io/blog/welcome</link>
