@@ -1,4 +1,4 @@
-#!/urs/bin/env kstring
+#!/urs/bin/env kscript
 
 fun sortedSquaredArray(array: List<Int>): List<Int> {
 

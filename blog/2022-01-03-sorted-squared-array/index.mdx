@@ -24,21 +24,20 @@ of the original integers also sorted in ascending order.
 
 ### first attempt
 
-first attempt which fails when `array` includes negative numbers
-give `array = [-2, -1]` output is `[4, 1]` which is wrong
+first attempt (which fails when `array` includes negative numbers)
+given `array = [-2, -1]` as input, output is `[4, 1]` which is wrong
 because correct output should be sorted in ascending order:
 
 <CodeBlock className="language-kotlin" title="first-attempt.kts">{FirstAttempt}</CodeBlock>
 
 what i like from `first-attempt` (failed) solution is that
 **we have no state** (we are not mutating anything), we are only
-traversing our input array.
+traversing our input array once and generating a new array as our output.
 
 ### second attempt
 
 an _optimal_ solution would be to use a data structure that preserves
-the order of its elements i.e binary tree
-but, given thath we have no binary tree at our disposal we can leverage
+the order of its elements i.e binary tree; but, given that we have no b-tree at our disposal we can leverage
 Kotlin native [BinarySearch](https://kotlinlang.org/docs/list-operations.html#binary-search-in-sorted-lists)
 methods in `List`. we need to be careful with the return value of 
 such a function in order to prevent index bound exceptions:
@@ -46,7 +45,7 @@ such a function in order to prevent index bound exceptions:
 <CodeBlock className="language-kotlin" title="second-attempt.kts">{SecondAttempt}</CodeBlock>
 
 what i **dislike** from `second-attempt` solution is that: we have state mutations.
-on the other hand i like that we are still traversing our input array once 
+on the other hand, i like that we are still traversing our input array once 
 meaning `O(n)` complexity which I think is nice!
 
 ### bonus
