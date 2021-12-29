@@ -6,9 +6,13 @@ tags: [algo, kotlin]
 ---
 
 import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 import FirstAttempt from '!!raw-loader!./solutions/first-attempt.kts';
 import SecondAttempt from '!!raw-loader!./solutions/second-attempt.kts';
 import BonusAttempt from '!!raw-loader!./solutions/bonus-attempt.kts';
+import BonusScalaSolution from '!!raw-loader!./solutions/scala-bonus.worksheet.sc';
 
 this time we will try to (satisfactory) solve a coding challenge.
 
@@ -50,7 +54,14 @@ meaning `O(n)` complexity which I think is nice!
 as a bonus here is a 3rd optional solution that is not as efficient as the previous one
 but this third solution is based on immutable data structures which is always good:
 
-<CodeBlock className="language-kotlin" title="bonus-attempt.kts">{BonusAttempt}</CodeBlock>
+<Tabs>
+  <TabItem value="kotlin" label="Kotlin" default>
+    <CodeBlock className="language-kotlin" title="bonus-attempt.kts">{BonusAttempt}</CodeBlock>
+  </TabItem>
+  <TabItem value="scala" label="Scala">
+    <CodeBlock className="language-scala" title="scala-bonus.worksheet.sc">{BonusScalaSolution}</CodeBlock>
+  </TabItem>
+</Tabs>
 
 > PD. in case you are wondering bout the `kscript` in the codeblocks take a look at:
 > [holgerbrandl/kscript](https://github.com/holgerbrandl/kscript)
