@@ -2,11 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://rafailong.github.io/blog/</id>
     <title>ravila' blog Blog</title>
-    <updated>2021-12-27T00:00:00.000Z</updated>
+    <updated>2022-01-03T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://rafailong.github.io/blog/"/>
     <subtitle>ravila' blog Blog</subtitle>
     <icon>https://rafailong.github.io/blog/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[sorted squared array]]></title>
+        <id>sorted-squared-array</id>
+        <link href="https://rafailong.github.io/blog/sorted-squared-array"/>
+        <updated>2022-01-03T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[this time we will try to (satisfactory) solve a coding challenge.]]></summary>
+        <author>
+            <name>Rafael Avila</name>
+            <uri>https://github.com/Rafailong</uri>
+        </author>
+    </entry>
     <entry>
         <title type="html"><![CDATA[haskell dollar-sign operator]]></title>
         <id>dollar-sign-operator</id>

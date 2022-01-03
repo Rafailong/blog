@@ -4,9 +4,16 @@
         <title>ravila' blog Blog</title>
         <link>https://rafailong.github.io/blog/</link>
         <description>ravila' blog Blog</description>
-        <lastBuildDate>Mon, 27 Dec 2021 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 03 Jan 2022 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
+        <item>
+            <title><![CDATA[sorted squared array]]></title>
+            <link>https://rafailong.github.io/blog/sorted-squared-array</link>
+            <guid>sorted-squared-array</guid>
+            <pubDate>Mon, 03 Jan 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[this time we will try to (satisfactory) solve a coding challenge.]]></description>
+        </item>
         <item>
             <title><![CDATA[haskell dollar-sign operator]]></title>
             <link>https://rafailong.github.io/blog/dollar-sign-operator</link>

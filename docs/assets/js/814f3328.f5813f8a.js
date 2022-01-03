@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkblog=self.webpackChunkblog||[]).push([[535],{5641:function(l){l.exports=JSON.parse('{"title":"All posts","items":[{"title":"haskell dollar-sign operator","permalink":"/blog/dollar-sign-operator"},{"title":"Welcome","permalink":"/blog/welcome"}]}')}}]);
