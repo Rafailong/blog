@@ -71,12 +71,9 @@ and `x >= 10`
 
 ```scala
 // terrible name :(
-def helper(n: Int): (Int, Int) = {
-  if (n >= 10) {
-    val r = n % 10
-    (1, r)
-  } else (0, n)
-}
+def helper(n: Int): (Int, Int) =
+  if (n >= 10) (1, n % 10)
+  else (0, n)
 ```
 
 time to code our recursive helper functions
@@ -135,7 +132,7 @@ final def loop(as: ListNode, bs: ListNode, acc: ListNode, r: Int): ListNode = {
 }
 ```
 
-it's time to asseble out "main" function
+it's time to implement our "main" function
 
 ```scala
 def addTwoNumbers(l1: ListNode, l2: ListNode): ListNode = {
@@ -177,7 +174,7 @@ show(listNode)
 // res0: String = "8 -> 0 -> 7"
 ```
 
-once again **hmm?** our resulting list is not in good order, rigth?
+once again *hmm?* our resulting list is not in good order, rigth?
 why don't we reverse it?
 
 ```scala
@@ -198,3 +195,109 @@ show(
 ```
 
 now that look better!
+
+```scala
+def addTwoNumbersImproved(l1: ListNode, l2: ListNode): ListNode = {
+  // this is safe given the constraints above
+  val a = l1.x
+  val b = l2.x
+  val (r, c) = helper(a + b)
+  reverse(
+    loop(
+      l1.next,
+      l2.next,
+      acc = new ListNode(c),
+      r
+    )
+  )
+}
+```
+
+but... that was a pretty simplistic way to test our solution, don't you think?
+
+we can do better with a great library:
+[scalacheck](https://scalacheck.org/index.html)
+
+let's start importing what we need from scalacheck
+
+```scala
+import org.scalacheck._
+import org.scalacheck.Prop._
+```
+
+scalacheck work require us to define `Prop`s. our `Prop` will look
+something like:
+
+```scala
+val myProp = forAll { (input: (ListNode, ListNode, Int)) => ??? }
+```
+
+now it is time to define `Gen`s and `Arbitrary` required for our `Prop`
+first, a `Gen[ListNode]`
+
+```scala
+//generates pair like:
+// (
+//   10,
+//   ListNode(0, ListNode(1))
+// )
+val listNodeGen: Gen[(Int, ListNode)] = for {
+  size <- Gen.chooseNum(1, 8) // our lists will have up to 8 nodes
+  head <- Gen.chooseNum(1, 9) // we do this hold constraint no. 3
+  tail <- Gen.listOfN(size - 1, Gen.chooseNum(0, 9)) // trailing digits can be 0-9
+  _list = head :: tail
+  n = _list.mkString.toInt
+  listNode = tail.reverse.foldRight(new ListNode(head)) { (i, ln) =>
+    new ListNode(i, ln)
+  }
+} yield (n, listNode)
+```
+
+now we need to define an `Arbitrary` for out `(ListNode, ListNode, Int)` type
+
+```scala
+type Input = (ListNode, ListNode, Int)
+
+// generates tuples like:
+// (
+//   ListNode(1),
+//   ListNode(0, ListNode(1)),
+//   11
+// )
+val inputGen: Gen[Input] =
+  for {
+    (n1, l1) <- listNodeGen
+    (n2, l2) <- listNodeGen
+  } yield (l1, l2, n1 + n2)
+
+implicit val arb: Arbitrary[Input] = Arbitrary(inputGen)
+```
+
+we have all we need to define our `Prop`
+
+```scala
+val prop = forAll { (input: Input) =>
+
+  // unapplying our input to avoid `._1` syntax
+  val (l1, l2, n) = input
+
+  // applying our solution
+  val result = addTwoNumbersImproved(l1, l2)
+
+  // we need to do this in order to prove our solution
+  val nn = {
+    val reversed = reverse(result)
+    // ListNode to immutable.List to Int
+    toList(reversed, List.empty).mkString.toInt
+  }
+
+  n == nn
+}
+// prop: Prop = Prop
+
+prop.check()
+// + OK, passed 100 tests.
+```
+
+now with "random" inputs to our solution and 100 test
+we can be somehow sure that it works! yay!
