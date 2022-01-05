@@ -27,10 +27,9 @@ addTwoNumbers l1 l2 == [7, 0, 8] -- 807 == 342 + 465
 
 ### constraints
 
-```javascript
-1 <= nums.length <= 105 // no empty lists! yay!
--104 <= nums[i] <= 104
-```
+1. the number of nodes in each linked list is in the range `[1, 100]`
+2. `0 <= ListNode.x <= 9`
+3. it is guaranteed that the list represents a number that does not have leading zeros
 
 ### linked list representations
 
@@ -169,13 +168,13 @@ hmm? maybe we can define a utility function to pretty print our list
 @tailrec
 private def toList(ln: ListNode, acc: List[Int]): List[Int] =
   if (ln == null) acc
-  else toList(ln.next, ln.x :: acc)
+  else toList(ln.next, acc :+ ln.x)
 
 def show(listNode: ListNode): String =
   toList(listNode, List.empty).mkString(" -> ")
 
 show(listNode)
-// res0: String = "7 -> 0 -> 8"
+// res0: String = "8 -> 0 -> 7"
 ```
 
 once again **hmm?** our resulting list is not in good order, rigth?
@@ -195,7 +194,7 @@ def reverse(listNode: ListNode): ListNode = {
 show(
   reverse(listNode)
 )
-// res1: String = "8 -> 0 -> 7"
+// res1: String = "7 -> 0 -> 8"
 ```
 
 now that look better!
