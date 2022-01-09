@@ -4,9 +4,206 @@
         <title>ravila' blog Blog</title>
         <link>https://rafailong.github.io/blog/</link>
         <description>ravila' blog Blog</description>
-        <lastBuildDate>Mon, 03 Jan 2022 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 10 Jan 2022 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
+        <item>
+            <title><![CDATA[add two number]]></title>
+            <link>https://rafailong.github.io/blog/add-two-numbers</link>
+            <guid>add-two-numbers</guid>
+            <pubDate>Mon, 10 Jan 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[time to solve another coding challenge.]]></description>
+            <content:encoded><![CDATA[<p>time to solve another coding challenge.</p><h2>description</h2><p>You are given two non-empty linked lists representing two non-negative integers.
+The digits are stored in reverse order, and each of their nodes contains a single digit.
+Add the two numbers and return the sum as a linked list.</p><p>You may assume the two numbers do not contain any leading zero,
+except the number 0 itself.</p><h3>example</h3><pre><code class="language-haskell">l1 = [2, 4, 3] -- 342
+l2 = [5, 6, 4] -- 465
+
+addTwoNumbers l1 l2 == [7, 0, 8] -- 807 == 342 + 465
+</code></pre><h3>constraints</h3><ol><li>the number of nodes in each linked list is in the range <code>[1, 100]</code></li><li><code>0 &lt;= ListNode.x &lt;= 9</code></li><li>it is guaranteed that the list represents a number that does not have leading zeros</li></ol><h3>linked list representations</h3><pre><code class="language-scala">// yes. this is no idiomatic scala. but for now, bear with me please!
+
+case class ListNode(_x: Int = 0, _next: ListNode = null) {
+  var next: ListNode = _next
+  var x: Int = _x
+}
+</code></pre><h2>solution</h2><p>first, we need to define a function signature:</p><pre><code class="language-scala">def addTwoNumbers(l1: ListNode, l2: ListNode): ListNode = ???
+</code></pre><p>then, let&#x27;s create input for our function.</p><pre><code class="language-scala">val n1 = new ListNode(2, new ListNode(4, new ListNode(3)))
+val n2 = new ListNode(5, new ListNode(6, new ListNode(4)))
+</code></pre><p>what comes to my mind is a recursive solution so we do as follow</p><pre><code class="language-scala">(2 + 5) == 7
+(4 + 6) == 0 // 10 - we need to presereve the most-left digit (0) only and carry the other one (1) to the next operation
+(3 + 4) == 7 + 1 == 8
+</code></pre><p>first thing first. we need a way to work with a number <code>x</code> given that <code>x = number_of_list_1 + number_of_list_2</code>
+and <code>x &gt;= 10</code></p><pre><code class="language-scala">// terrible name :(
+def helper(n: Int): (Int, Int) =
+  if (n &gt;= 10) (1, n % 10)
+  else (0, n)
+</code></pre><p>time to code our recursive helper functions</p><pre><code class="language-scala">/**
+* @param as list 1
+* @param bs list 2
+* @param acc our seed/accumulator list
+* @param r the digit to carry for the next operation
+*          if the sum of two numbers is 10 then r = 1
+*          for the next iteration 
+*/
+@tailrec
+final def loop(as: ListNode, bs: ListNode, acc: ListNode, r: Int): ListNode = {
+  (as, bs) match {
+    // base case, when both lists are &quot;empty&quot;
+    // BUT we have an r to include as last digit (not leading zero)
+    case (null, null) if r &gt; 0 =&gt; new ListNode(r, acc)
+
+    // base case, when both lists are &quot;empty&quot; but without r
+    case (null, null)          =&gt; acc
+
+    // following two cases are similar and handle
+    // the scenario where one of the 2 lists have elements
+    // but the other list is empty
+    case (_, null) =&gt;
+      val (nr, a) = helper(as.x + r)
+      loop(
+        as.next,
+        bs = null,
+        acc = new ListNode(a, acc),
+        nr
+      )
+    case (null, _) =&gt;
+      val (nr, b) = helper(bs.x + r)
+      loop(
+        as = null,
+        bs.next,
+        acc = new ListNode(b, acc),
+        nr
+      )
+
+    // when both lists have elements
+    case (_, _) =&gt;
+      val a = as.x
+      val b = bs.x
+      val (nr, c) = helper(a + b + r)
+      loop(
+        as.next,
+        bs.next,
+        acc = new ListNode(c, acc),
+        nr
+      )
+  }
+}
+</code></pre><p>it&#x27;s time to implement our &quot;main&quot; function</p><pre><code class="language-scala">def addTwoNumbers(l1: ListNode, l2: ListNode): ListNode = {
+  // this is safe given the constraints above
+  val a = l1.x
+  val b = l2.x
+  val (r, c) = helper(a + b)
+  loop(
+    l1.next,
+    l2.next,
+    acc = new ListNode(c),
+    r
+  )
+}
+</code></pre><p>time to give it a try to our solution:</p><pre><code class="language-scala">val listNode = addTwoNumbers(n1, n2)
+// listNode: ListNode = ListNode(
+//   _x = 8,
+//   _next = ListNode(_x = 0, _next = ListNode(_x = 7, _next = null))
+// )
+</code></pre><p>hmm? maybe we can define a utility function to pretty print our list</p><pre><code class="language-scala">@tailrec
+private def toList(ln: ListNode, acc: List[Int]): List[Int] =
+  if (ln == null) acc
+  else toList(ln.next, acc :+ ln.x)
+
+def show(listNode: ListNode): String =
+  toList(listNode, List.empty).mkString(&quot; -&gt; &quot;)
+
+show(listNode)
+// res0: String = &quot;8 -&gt; 0 -&gt; 7&quot;
+</code></pre><p>once again <em>hmm?</em> our resulting list is not in good order, rigth?
+why don&#x27;t we reverse it?</p><pre><code class="language-scala">def reverse(listNode: ListNode): ListNode = {
+
+  @tailrec
+  def loop(ln: ListNode, acc: ListNode): ListNode =
+    if (ln == null) acc
+    else loop(ln.next, new ListNode(ln.x, acc))
+
+  loop(listNode.next, new ListNode(listNode.x))
+}
+
+show(
+  reverse(listNode)
+)
+// res1: String = &quot;7 -&gt; 0 -&gt; 8&quot;
+</code></pre><p>now that look better!</p><pre><code class="language-scala">def addTwoNumbersImproved(l1: ListNode, l2: ListNode): ListNode = {
+  // this is safe given the constraints above
+  val a = l1.x
+  val b = l2.x
+  val (r, c) = helper(a + b)
+  reverse(
+    loop(
+      l1.next,
+      l2.next,
+      acc = new ListNode(c),
+      r
+    )
+  )
+}
+</code></pre><p>but... that was a pretty simplistic way to test our solution, don&#x27;t you think?</p><p>we can do better with a great library:
+<a href="https://scalacheck.org/index.html">scalacheck</a></p><p>let&#x27;s start importing what we need from scalacheck</p><pre><code class="language-scala">import org.scalacheck._
+import org.scalacheck.Prop._
+</code></pre><p>scalacheck work require us to define <code>Prop</code>s. our <code>Prop</code> will look
+something like:</p><pre><code class="language-scala">val myProp = forAll { (input: (ListNode, ListNode, Int)) =&gt; ??? }
+</code></pre><p>now it is time to define <code>Gen</code>s and <code>Arbitrary</code> required for our <code>Prop</code>
+first, a <code>Gen[ListNode]</code></p><pre><code class="language-scala">//generates pair like:
+// (
+//   10,
+//   ListNode(0, ListNode(1))
+// )
+val listNodeGen: Gen[(Int, ListNode)] = for {
+  size &lt;- Gen.chooseNum(1, 8) // our lists will have up to 8 nodes
+  head &lt;- Gen.chooseNum(1, 9) // we do this hold constraint no. 3
+  tail &lt;- Gen.listOfN(size - 1, Gen.chooseNum(0, 9)) // trailing digits can be 0-9
+  _list = head :: tail
+  n = _list.mkString.toInt
+  listNode = tail.reverse.foldRight(new ListNode(head)) { (i, ln) =&gt;
+    new ListNode(i, ln)
+  }
+} yield (n, listNode)
+</code></pre><p>now we need to define an <code>Arbitrary</code> for out <code>(ListNode, ListNode, Int)</code> type</p><pre><code class="language-scala">type Input = (ListNode, ListNode, Int)
+
+// generates tuples like:
+// (
+//   ListNode(1),
+//   ListNode(0, ListNode(1)),
+//   11
+// )
+val inputGen: Gen[Input] =
+  for {
+    (n1, l1) &lt;- listNodeGen
+    (n2, l2) &lt;- listNodeGen
+  } yield (l1, l2, n1 + n2)
+
+implicit val arb: Arbitrary[Input] = Arbitrary(inputGen)
+</code></pre><p>we have all we need to define our <code>Prop</code></p><pre><code class="language-scala">val prop = forAll { (input: Input) =&gt;
+
+  // unapplying our input to avoid `._1` syntax
+  val (l1, l2, n) = input
+
+  // applying our solution
+  val result = addTwoNumbersImproved(l1, l2)
+
+  // we need to do this in order to prove our solution
+  val nn = {
+    val reversed = reverse(result)
+    // ListNode to immutable.List to Int
+    toList(reversed, List.empty).mkString.toInt
+  }
+
+  n == nn
+}
+// prop: Prop = Prop
+
+prop.check()
+// + OK, passed 100 tests.
+</code></pre><p>now with &quot;random&quot; inputs to our solution and 100 test
+we can be somehow sure that it works! yay!</p>]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[sorted squared array]]></title>
             <link>https://rafailong.github.io/blog/sorted-squared-array</link>
