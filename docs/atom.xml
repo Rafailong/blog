@@ -2,11 +2,94 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://rafailong.github.io/blog/</id>
     <title>ravila' blog Blog</title>
-    <updated>2022-01-10T00:00:00.000Z</updated>
+    <updated>2022-01-19T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://rafailong.github.io/blog/"/>
     <subtitle>ravila' blog Blog</subtitle>
     <icon>https://rafailong.github.io/blog/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[sum triangle from array]]></title>
+        <id>sum-triangle-from-array</id>
+        <link href="https://rafailong.github.io/blog/sum-triangle-from-array"/>
+        <updated>2022-01-19T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[another week, another code challenge]]></summary>
+        <content type="html"><![CDATA[<p>another week, another code challenge</p><h2>description</h2><p>given an array of integers, print a sum triangle from it such that
+the first level has all array elements.
+from then, at each level number of elements is one less than the previous level
+and elements at the level is be the <strong>sum</strong> of consecutive two elements in the previous level. </p><h3>example</h3><pre><code class="language-scala">def sumTriangle(number: List[Int]): List[List[Int]] = ???
+
+val input = List(1, 2, 3, 4, 5)
+
+show(
+  sumTriangle(input)
+)
+// stdout output
+// List(
+//   List(48),
+//   List(20, 28), 
+//   List(8, 12, 16), 
+//   List(3, 5, 7, 9), 
+//   List(1, 2, 3, 4, 5)
+// )
+</code></pre><h2>solution</h2><p>first, we need to find a way to sum the elements of a list in pairs,
+something that does like:</p><pre><code class="language-haskell">[1, 2, 3, 4, 5] -&gt; [1 + 2, 2 + 3, 3 + 4, 4 + 5] = [3, 5, 7, 9]
+</code></pre><p>🤔 intresting enough, this looks like we need to <code>zip</code> one element with its successor.</p><pre><code class="language-scala">def sum(ns: List[Int]): List[Int] =
+  ns.zip(ns.tail).map { case (a, b) =&gt; a + b }
+
+sum(List(1, 2, 3, 4, 5))
+// res0: List[Int] = List(3, 5, 7, 9)
+</code></pre><p>nice! this seems to work correctly. now that we can produce a level of
+our trigle from a base level next step is to produce the whole triangle
+from our input level (base level).</p><p>but first, let&#x27;s get a bit piky and define a type alias for our triangle</p><pre><code class="language-scala">type Triangle = List[List[Int]]
+
+object Triangle {
+  def apply(ns: List[Int]): Triangle = ns :: Nil
+}
+</code></pre><p>now we can implement our <em>main</em> function:</p><pre><code class="language-scala">def sumTriangle(numbers: List[Int]): Triangle = {
+
+  @tailrec
+  def go(ns: List[Int], triangle: Triangle): Triangle =
+    ns match {
+      case _ :: _ =&gt;
+        val level = sum(ns)
+        go(level, level :: triangle)
+      case Nil =&gt; triangle
+    }
+
+  go(numbers, Triangle(numbers))
+}
+</code></pre><p>as you may notice, this implementation is tail recursive (proved by the compiler)
+and it builds a triangle from bottom to top.
+let&#x27;s give it a try!</p><pre><code class="language-scala">val triangle = sumTriangle(
+  List(1, 2, 3, 4, 5)
+)
+// triangle: Triangle = List(
+//   List(),
+//   List(48),
+//   List(20, 28),
+//   List(8, 12, 16),
+//   List(3, 5, 7, 9),
+//   List(1, 2, 3, 4, 5)
+// )
+</code></pre><p>as an extra let&#x27;s try to pretty print our triangle</p><pre><code class="language-scala">def show(triangle: Triangle): String =
+  triangle.foldRight(&quot;&quot;) { case (ns, str) =&gt;
+    s&quot;${ns.mkString(&quot;,&quot;)}&quot; ++ System.lineSeparator() ++ str
+  }
+
+show(triangle)
+// res1: String = &quot;&quot;&quot;
+// 48
+// 20,28
+// 8,12,16
+// 3,5,7,9
+// 1,2,3,4,5
+// &quot;&quot;&quot;
+</code></pre><blockquote><p>PS. worth to mention that this blog post is a markdown file processed with the awesome <a href="https://scalameta.org/mdoc/">mdoc</a> 🤓</p></blockquote>]]></content>
+        <author>
+            <name>Rafael Avila</name>
+            <uri>https://github.com/Rafailong</uri>
+        </author>
+    </entry>
     <entry>
         <title type="html"><![CDATA[add two number]]></title>
         <id>add-two-numbers</id>

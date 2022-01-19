@@ -36,9 +36,6 @@ show(
 
 ## solution
 
-```scala mdoc:invisible
-import scala.annotation.tailrec
-```
 
 first, we need to find a way to sum the elements of a list in pairs, 
 something that does like:
@@ -49,11 +46,12 @@ something that does like:
 
 🤔 intresting enough, this looks like we need to `zip` one element with its successor.
 
-```scala mdoc
+```scala
 def sum(ns: List[Int]): List[Int] =
   ns.zip(ns.tail).map { case (a, b) => a + b }
 
 sum(List(1, 2, 3, 4, 5))
+// res0: List[Int] = List(3, 5, 7, 9)
 ```
 
 nice! this seems to work correctly. now that we can produce a level of
@@ -62,7 +60,7 @@ from our input level (base level).
 
 but first, let's get a bit piky and define a type alias for our triangle
 
-```scala mdoc
+```scala
 type Triangle = List[List[Int]]
 
 object Triangle {
@@ -72,7 +70,7 @@ object Triangle {
 
 now we can implement our *main* function:
 
-```scala mdoc
+```scala
 def sumTriangle(numbers: List[Int]): Triangle = {
 
   @tailrec
@@ -92,21 +90,36 @@ as you may notice, this implementation is tail recursive (proved by the compiler
 and it builds a triangle from bottom to top.
 let's give it a try!
 
-```scala mdoc
+```scala
 val triangle = sumTriangle(
   List(1, 2, 3, 4, 5)
 )
+// triangle: Triangle = List(
+//   List(),
+//   List(48),
+//   List(20, 28),
+//   List(8, 12, 16),
+//   List(3, 5, 7, 9),
+//   List(1, 2, 3, 4, 5)
+// )
 ```
 
 as an extra let's try to pretty print our triangle
 
-```scala mdoc
+```scala
 def show(triangle: Triangle): String =
   triangle.foldRight("") { case (ns, str) =>
     s"${ns.mkString(",")}" ++ System.lineSeparator() ++ str
   }
 
 show(triangle)
+// res1: String = """
+// 48
+// 20,28
+// 8,12,16
+// 3,5,7,9
+// 1,2,3,4,5
+// """
 ```
 
 > PS. worth to mention that this blog post is a markdown file processed with the awesome [mdoc](https://scalameta.org/mdoc/) 🤓
