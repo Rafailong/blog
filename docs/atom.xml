@@ -2,11 +2,133 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://rafailong.github.io/blog/</id>
     <title>ravila' blog Blog</title>
-    <updated>2022-01-19T00:00:00.000Z</updated>
+    <updated>2022-01-26T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://rafailong.github.io/blog/"/>
     <subtitle>ravila' blog Blog</subtitle>
     <icon>https://rafailong.github.io/blog/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[is the number a palindrome?]]></title>
+        <id>number-is-palindrome</id>
+        <link href="https://rafailong.github.io/blog/number-is-palindrome"/>
+        <updated>2022-01-26T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[description]]></summary>
+        <content type="html"><![CDATA[<h2>description</h2><p>Given an integer <code>x</code>, return <code>true</code> if <code>x</code> is palindrome integer.
+An integer is a palindrome when it reads the same backward as forward.
+For example, <code>121</code> is a palindrome while <code>123</code> is not.</p><h3>constraints</h3><ul><li><code>x &gt;= 0</code></li><li>usage of strings is prohibited</li></ul><h2>solution</h2><p>first idea is to decompose the given number in 3 parts:</p><pre><code>x = 123321
+first  = 1
+last   = 1
+others = 2332
+</code></pre><p>with the number decoposition it would be possible to decompose the number till either:</p><ol><li><code>first != last</code></li><li>or, it is not possible to decompose the number i.e. number of one digit <code>1</code></li></ol><p>so, let&#x27;s try to implement a function to decompose a nuber:</p><pre><code class="language-scala">def isOneDigit(n: Int): Boolean = n &gt;= 0 &amp;&amp; n &lt; 10
+
+def deconstruct(number: Int): (Int, Option[Int], Int) = {
+
+  if (isOneDigit(number)) (number, None, number)
+  else {
+
+    val n = {
+      val a = Math.log10(number).intValue()
+      Math.pow(10, a).intValue()
+    }
+
+    val firstDigit = number / n
+    val lastDigit = number % 10
+    val left = {
+      if (isOneDigit(number / 10)) None
+      else Some((number % n) / 10)
+    }
+
+    (firstDigit, left, lastDigit)
+  }
+}
+</code></pre><p>as you case <code>deconstruct</code> returns a three-tuple with an <code>Option</code> in the middle.
+let&#x27;s see how <code>deconstruct</code> behaves:</p><pre><code class="language-scala">deconstruct(123)
+// res0: (Int, Option[Int], Int) = (1, Some(value = 2), 3)
+deconstruct(1)
+// res1: (Int, Option[Int], Int) = (1, None, 1)
+deconstruct(11)
+// res2: (Int, Option[Int], Int) = (1, None, 1)
+</code></pre><p>okay... it seems there are couple special cases here:</p><ol><li>when we pass a 1-digit number: <code>first</code> and <code>last</code> will be <em>that</em> and <code>others</code> will be a <code>None</code> </li><li>and, when we pass a 2-digits number: <code>other</code> will be <code>None</code> too</li></ol><p>so, it seems we kind of have a base case for a recursive function that will find out
+if a number is a palindrome or not:</p><pre><code class="language-scala">def isPalindrome(number: Int): Boolean = {
+  @tailrec
+  def recur(number: Int, acc: Boolean): Boolean = {
+    val (h, ns, t) = deconstruct(number)
+    val bool       = h == t &amp;&amp; acc
+    if (bool) {
+      ns match {
+        case Some(value) =&gt; recur(value, bool)
+        case None        =&gt; bool
+      }
+    } else false
+  }
+
+  recur(number, true)
+}
+
+isPalindrome(1203021)
+// res3: Boolean = false
+isPalindrome(123421)
+// res4: Boolean = false
+isPalindrome(123321)
+// res5: Boolean = true
+isPalindrome(10001)
+// res6: Boolean = true
+isPalindrome(1000)
+// res7: Boolean = false
+isPalindrome(8)
+// res8: Boolean = true
+isPalindrome(0)
+// res9: Boolean = true
+</code></pre><p>welp... obviously something is not working as expects 😓
+our <code>deconstruct</code> functions seem to be the suspected here.
+so let&#x27;s <em>debug</em> it:</p><pre><code class="language-scala">deconstruct(1203021) == (1, Some(20302), 1)
+// res10: Boolean = true
+deconstruct(20302)
+// res11: (Int, Option[Int], Int) = (2, Some(value = 30), 2)
+</code></pre><p>🤡 <code>deconstruct</code> has no respect for the leading zeros which is OK because <code>30 = 030</code> and we are working with <code>Int</code>s</p><p>time to try different approach. what bout an accumulative approach?</p><pre><code class="language-scala">case class Acc private (org: List[Int], reversed: List[Int]) { self =&gt;
+  def add(digit: Int): Acc = Acc(
+    org      = self.org :+ digit,
+    reversed = digit +: self.reversed
+  )
+}
+object Acc {
+  def empty: Acc = Acc(List.empty, List.empty)
+}
+</code></pre><p><code>Acc</code> is our accumulative structure. it does maintian 2 lists
+and every time we want to <code>add</code> a number to it:</p><ol><li>it will append the digit to one list <code>org</code></li><li>and, it will preppend the same digit to the other list <code>reversed</code></li></ol><p>time to implement our function to check if a number is palindrome or not
+using <code>Acc</code>:</p><pre><code class="language-scala">def lastDigit(n: Int): Int = n % 10
+
+def isPalindromeAcc(x: Int): Boolean =
+  if (isOneDigit(x)) true
+  else {
+
+    @tailrec
+    def go(acc: Acc, n: Int): Acc =
+      if (n &gt; 0) go(((acc.add _) compose (lastDigit _))(n), n / 10)
+      else acc
+
+    val Acc(org, reversed) = go(Acc.empty, x)
+    org sameElements reversed
+  }
+</code></pre><p>the function <code>isPalindromAcc</code>:</p><ul><li>check if <code>x</code> is a number of one digit (short-circuit)</li><li>&quot;deconstruct&quot; <code>x</code> from right to left and <code>add</code>-em to an <code>Acc</code></li><li>and last step, it compares the list from <code>Acc</code> using <code>sameElements</code>
+which checks that both list contains the same elements at the same order</li></ul><p>let&#x27;s give it a try:</p><pre><code class="language-scala">isPalindromeAcc(1203021)
+// res12: Boolean = true
+isPalindromeAcc(123421)
+// res13: Boolean = false
+isPalindromeAcc(10001)
+// res14: Boolean = true
+isPalindromeAcc(1000)
+// res15: Boolean = false
+isPalindromeAcc(8)
+// res16: Boolean = true
+isPalindromeAcc(0)
+// res17: Boolean = true
+</code></pre><p>this looks much better! 🥳 things to note:</p><ul><li><code>isPalindrom</code> works perfectly for numbers without zeros in the middle and it is more efficient that <code>isPalindromAcc</code> in both time and space</li><li><code>isPalindromAcc</code> work great with any <code>x &gt;= 0</code> but it is memory heavy</li></ul>]]></content>
+        <author>
+            <name>Rafael Avila</name>
+            <uri>https://github.com/Rafailong</uri>
+        </author>
+    </entry>
     <entry>
         <title type="html"><![CDATA[sum triangle from array]]></title>
         <id>sum-triangle-from-array</id>
