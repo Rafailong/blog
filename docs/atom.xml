@@ -2,11 +2,122 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://rafailong.github.io/blog/</id>
     <title>ravila' blog Blog</title>
-    <updated>2022-01-26T00:00:00.000Z</updated>
+    <updated>2022-01-31T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://rafailong.github.io/blog/"/>
     <subtitle>ravila' blog Blog</subtitle>
     <icon>https://rafailong.github.io/blog/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[roman number to decimal number]]></title>
+        <id>roman-to-decimal</id>
+        <link href="https://rafailong.github.io/blog/roman-to-decimal"/>
+        <updated>2022-01-31T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[description]]></summary>
+        <content type="html"><![CDATA[<h2>description</h2><p>roman numerals are represented by seven different symbols: <code>I</code>, <code>V</code>, <code>X</code>, <code>L</code>, <code>C</code>, <code>D</code> and <code>M</code>.</p><pre><code>Symbol       Value
+I             1
+V             5
+X             10
+L             50
+C             100
+D             500
+M             1000
+</code></pre><p>for example, 2 is written as <code>II</code> in roman numeral, just two one&#x27;s added together. 12 is written as <code>XII</code>, which is simply <code>X + II</code>.
+the number 27 is written as <code>XXVII</code>, which is <code>XX + V + II</code>.</p><p>roman numerals are usually written largest to smallest from left to right. however, the numeral for four is not <code>IIII</code>.
+instead, the number four is written as <code>IV</code>. because the one is before the five we subtract it making four.
+the same principle applies to the number nine, which is written as <code>IX</code>.
+there are six instances where subtraction is used:</p><ul><li><code>I</code> can be placed before <code>V</code> (5) and <code>X</code> (10) to make 4 and 9. </li><li><code>X</code> can be placed before <code>L</code> (50) and <code>C</code> (100) to make 40 and 90. </li><li><code>C</code> can be placed before <code>D</code> (500) and <code>M</code> (1000) to make 400 and 900.</li></ul><p>given a roman numeral, convert it to an integer.</p><h3>constraints</h3><ul><li><code>1 &lt;= s.length &lt;= 15</code></li><li><code>s</code> contains only the characters (<code>I</code>, <code>V</code>, <code>X</code>, <code>L</code>, <code>C</code>, <code>D</code>, <code>M</code>).</li><li>it is guaranteed that s is a valid roman numeral in the range <!-- -->[1, 3999]<!-- -->.</li></ul><h2>solution</h2><p>this time we are going to try to solve the challenge in 3 different ways.
+but firts, let&#x27;s define two support <code>Map</code>s:</p><pre><code class="language-scala">val symbolAndValue = Map(
+    &#x27;I&#x27; -&gt; 1,
+    &#x27;V&#x27; -&gt; 5,
+    &#x27;X&#x27; -&gt; 10,
+    &#x27;L&#x27; -&gt; 50,
+    &#x27;C&#x27; -&gt; 100,
+    &#x27;D&#x27; -&gt; 500,
+    &#x27;M&#x27; -&gt; 1000
+  )
+
+val specialSymbols = Map(
+  &quot;IV&quot; -&gt; 4,
+  &quot;IX&quot; -&gt; 9,
+  &quot;XL&quot; -&gt; 40,
+  &quot;XC&quot; -&gt; 90,
+  &quot;CD&quot; -&gt; 400,
+  &quot;CM&quot; -&gt; 900
+)
+</code></pre><h3>scala as a better java</h3><p>let&#x27;s implement a function using scala as a better java).
+so, our function should:</p><ul><li>mutate state</li><li>and, iterate not recurs</li></ul><pre><code class="language-scala">def romanToIntJavaLike(s: String): Int = {
+  var sum = 0
+  val size = s.length
+  var i = 0
+  while (i &lt; size) {
+    val a = s(i)
+
+    // extracting next char
+    val j = i + 1
+    if (j &lt; size) {
+      val str = s&quot;$a${s(j)}&quot;
+
+      // and finding if the pair of current and next is s special case
+      specialSymbols.get(str) match {
+        case Some(n) =&gt;
+          sum = sum + n
+          i = i + 2
+        case None =&gt;
+          symbolAndValue.get(a).foreach { n =&gt;
+            sum = sum + n
+            i = i + 1
+          }
+      }
+    } else {
+      symbolAndValue.get(a).foreach { n =&gt;
+        sum = sum + n
+        i = i + 1
+      }
+    }
+
+  }
+
+  sum
+}
+</code></pre><p>as you can see, <code>ronamToIntJavaLike</code>:</p><ul><li>defines a accumulator <code>sum</code> </li><li>iterate its input string <code>s</code> char-by-char</li><li>crusial part is checking if there is a next char from our current char so we can check if the pair is a special case</li></ul><p>let&#x27;s give it a try:</p><pre><code class="language-scala">romanToIntJavaLike(&quot;III&quot;)     // 3
+// res0: Int = 3     // 3
+romanToIntJavaLike(&quot;LVIII&quot;)   // 58
+// res1: Int = 58   // 58
+romanToIntJavaLike(&quot;MCMXCIV&quot;) // 1994
+// res2: Int = 1994
+</code></pre><p>welp, implementation seems to work.</p><h3>scala-ish?</h3><p>the scala-ish solution should:</p><ul><li>be tail recursive</li><li>leverage pattern matching</li></ul><pre><code class="language-scala">def romanToInt(s: String): Int = {
+  val valueOfSymbol: Char =&gt; Int = symbolAndValue.getOrElse(_, 0)
+
+  @tailrec
+  def go(chars: List[Char], sum: Int): Int = {
+    chars match {
+      case c1 :: c2 :: tail =&gt;
+        specialSymbols.get(s&quot;$c1$c2&quot;) match {
+          case Some(n) =&gt; go(tail, sum + n)
+          // note that if c1 and c2 pair was not an specil sumbol i.e. IV
+          // we only discard c1 and c2 is part of our collection for the next
+          // recursive call
+          case None    =&gt; go(c2 :: tail, valueOfSymbol(c1) + sum)
+        }
+      case c1 :: tail =&gt; go(tail, valueOfSymbol(c1) + sum)
+      case Nil        =&gt; sum
+    }
+  }
+
+  go(s.toList, 0)
+}
+</code></pre><p>let&#x27;s give it a try:</p><pre><code class="language-scala">romanToInt(&quot;III&quot;)
+// res3: Int = 3
+romanToInt(&quot;LVIII&quot;)
+// res4: Int = 58
+romanToInt(&quot;MCMXCIV&quot;)
+// res5: Int = 1994
+</code></pre><p>welp, this implementation seem to work correctly too! yay!</p>]]></content>
+        <author>
+            <name>Rafael Avila</name>
+            <uri>https://github.com/Rafailong</uri>
+        </author>
+    </entry>
     <entry>
         <title type="html"><![CDATA[is the number a palindrome?]]></title>
         <id>number-is-palindrome</id>
