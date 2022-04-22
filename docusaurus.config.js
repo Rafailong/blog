@@ -31,6 +31,8 @@ const config = {
           blogDescription: 'A Docusaurus powered blog!',
           // Please change this to your repo.
           editUrl: 'https://github.com/Rafailong/blog/tree/main/docs',
+          blogSidebarCount: 'ALL',
+          postsPerPage: 5
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

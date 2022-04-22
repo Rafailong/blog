@@ -16,6 +16,8 @@ For example, `121` is a palindrome while `123` is not.
 - `x >= 0`
 - usage of strings is prohibited
 
+<!--truncate-->
+
 ## solution
 
 

@@ -14,6 +14,8 @@ the first level has all array elements.
 from then, at each level number of elements is one less than the previous level 
 and elements at the level is be the **sum** of consecutive two elements in the previous level. 
 
+<!--truncate-->
+
 ### example
 
 ```scala

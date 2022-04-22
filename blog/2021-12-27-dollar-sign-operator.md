@@ -8,6 +8,8 @@ tags: [haskell]
 The `($)` operator is a convenience for when you want to express
 something with less pairs of parenths.
 
+<!--truncate-->
+
 Type of `($)` is:
 
 ``` haskell

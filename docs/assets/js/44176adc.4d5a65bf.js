@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkblog=self.webpackChunkblog||[]).push([[11],{2266:function(e){e.exports=JSON.parse('{"permalink":"/blog/","page":1,"postsPerPage":5,"totalPages":2,"totalCount":8,"nextPage":"/blog/page/2","blogDescription":"A Docusaurus powered blog!","blogTitle":"ravila\' blog!"}')}}]);

@@ -34,6 +34,8 @@ there are six instances where subtraction is used:
 
 given a roman numeral, convert it to an integer.
 
+<!--truncate-->
+
 ### constraints
 
 - `1 <= s.length <= 15`
