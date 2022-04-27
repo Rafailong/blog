@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkblog=self.webpackChunkblog||[]).push([[8430],{3489:function(e){e.exports=JSON.parse('{"permalink":"/blog/tags/haskell","page":1,"postsPerPage":5,"totalPages":1,"totalCount":1,"blogDescription":"A Docusaurus powered blog!","blogTitle":"ravila\' blog!"}')}}]);

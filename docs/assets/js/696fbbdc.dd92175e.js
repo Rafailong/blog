@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkblog=self.webpackChunkblog||[]).push([[4276],{2536:function(a){a.exports=JSON.parse('{"permalink":"/blog/tags/scala/page/2","page":2,"postsPerPage":5,"totalPages":2,"totalCount":6,"previousPage":"/blog/tags/scala","blogDescription":"A Docusaurus powered blog!","blogTitle":"ravila\' blog!"}')}}]);
